@@ -83,6 +83,54 @@
   }
 }
 
-.animate-glitch {
-  animation: glitch 0.3s cubic-bezier(.25, .46, .45, .94) both infinite;
+/* --- COWBOY ANIMATIONS --- */
+.animate-cowboy-idle {
+  background-image: url('/cowboybreathing.png');
+  background-size: 400% 100%;
+  animation: play-cowboy-idle 0.8s steps(4) infinite;
+}
+
+.animate-cowboy-attack {
+  background-image: url('/cowboyfightingbetter.png');
+  background-size: 600% 100%;
+  animation: play-cowboy-attack 0.6s steps(6) forwards;
+}
+
+/* --- WOLF ANIMATIONS --- */
+.animate-wolf-idle {
+  background-image: url('/wolfbreathing.png');
+  background-size: 400% 100%;
+  animation: play-wolf-idle 0.8s steps(4) infinite;
+}
+
+.animate-wolf-hurt {
+  background-image: url('/wolfhurt.png');
+  background-size: 300% 100%;
+  animation: play-wolf-hurt 0.3s steps(3) forwards;
+  filter: sepia(1) hue-rotate(-50deg) saturate(3) brightness(1.2);
+}
+
+/* --- KEYFRAMES --- */
+@keyframes play-cowboy-idle {
+  100% {
+    background-position: -400%;
+  }
+}
+
+@keyframes play-cowboy-attack {
+  100% {
+    background-position: -600%;
+  }
+}
+
+@keyframes play-wolf-idle {
+  100% {
+    background-position: -400%;
+  }
+}
+
+@keyframes play-wolf-hurt {
+  100% {
+    background-position: -300%;
+  }
 }

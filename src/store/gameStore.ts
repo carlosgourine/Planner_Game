@@ -18,6 +18,10 @@ interface GameState {
     day: number;
     gameStatus: 'playing' | 'won_level' | 'lost_level' | 'game_won';
 
+    // Fighting Animation State
+    isAttacking: boolean;
+    wolfStatus: 'idle' | 'hurt';
+
     // Actions
     addGoal: (goal: Omit<Goal, 'id' | 'completed'>) => void;
     toggleGoal: (id: string, completed: boolean) => void;
@@ -25,6 +29,7 @@ interface GameState {
     nextLevel: () => void;
     resetGame: () => void;
     deleteGoal: (id: string) => void;
+    triggerAttack: () => void;
 }
 
 export const useGameStore = create<GameState>()(
@@ -36,6 +41,10 @@ export const useGameStore = create<GameState>()(
             day: 1,
             gameStatus: 'playing',
 
+            // Animation State Initial Values
+            isAttacking: false,
+            wolfStatus: 'idle',
+
             addGoal: (goalData) => set((state) => ({
                 goals: [...state.goals, { ...goalData, id: crypto.randomUUID(), completed: false }]
             })),
@@ -44,25 +53,17 @@ export const useGameStore = create<GameState>()(
                 const goal = state.goals.find(g => g.id === id);
                 if (!goal) return state;
 
-                // Calculate damage strictly on completion toggle
-                // If un-completing, we heal the boss? For now, let's keep it simple: 
-                // Damage is applied when 'completing'. 
-                // Ideally, damage should be separate, but let's simplify:
-                // completion logic handles the damage calculation.
-
                 let damage = 0;
                 if (completed && !goal.completed) {
                     // Calculate productivity/damage
                     // Base Damage + (Difficulty * Urgency)
-                    // Example: 5 Diff * 5 Urgency = 25 damage.
                     damage = (goal.difficulty * goal.urgency) + 5;
                 } else if (!completed && goal.completed) {
-                    // Revert damage if user unchecks (accidental click)
+                    // Revert damage if user unchecks
                     damage = -((goal.difficulty * goal.urgency) + 5);
                 }
 
-                const newHp = Math.max(0, state.bossHp - damage); // Don't heal above max? Or allow undo?
-                // Let's just clamp to 0 minimum.
+                const newHp = Math.max(0, state.bossHp - damage);
 
                 // Check for win
                 let newStatus: GameState['gameStatus'] = state.gameStatus;
@@ -83,14 +84,33 @@ export const useGameStore = create<GameState>()(
                 goals: state.goals.filter(g => g.id !== id)
             })),
 
+            triggerAttack: () => {
+                // 1. Cowboy starts his attack (Animation duration: 600ms)
+                set({ isAttacking: true });
+
+                // 2. Impact point (approx 75% through animation)
+                setTimeout(() => {
+                    set((state) => ({
+                        wolfStatus: 'hurt',
+                        bossHp: Math.max(0, state.bossHp - 20)
+                    }));
+                }, 450);
+
+                // 3. Cowboy finishes his move
+                setTimeout(() => {
+                    set({ isAttacking: false });
+                }, 600);
+
+                // 4. Wolf recovers after a short delay (recoil)
+                setTimeout(() => {
+                    set({ wolfStatus: 'idle' });
+                }, 950);
+            },
+
             endDay: () => set((state) => {
                 if (state.bossHp <= 0) {
-                    // Already won, just moving to next day shouldn't really change much unless we want to force next level?
-                    // "Next Level" action handles the actual progression.
-                    // But if end day is pressed while won, maybe nothing happens or we force next level.
                     return state;
                 } else {
-                    // Valid loss condition
                     return {
                         gameStatus: 'playing',
                         goals: [], // Fresh start for the new day
@@ -101,7 +121,6 @@ export const useGameStore = create<GameState>()(
             }),
 
             nextLevel: () => set(() => {
-                // Since we only have one boss, "Winning" the level wins the whole game
                 return { gameStatus: 'game_won' };
             }),
 

@@ -6,7 +6,15 @@ import { motion, AnimatePresence } from 'framer-motion';
 import clsx from 'clsx';
 
 export const GoalList: React.FC = () => {
-    const { goals, toggleGoal, deleteGoal } = useGameStore();
+    const { goals, toggleGoal, deleteGoal, triggerAttack } = useGameStore();
+
+    const handleToggle = (id: string, currentStatus: boolean) => {
+        toggleGoal(id, !currentStatus);
+        if (!currentStatus) {
+            // If completing the task, trigger attack animation
+            triggerAttack();
+        }
+    };
 
     if (goals.length === 0) {
         return (
@@ -23,7 +31,7 @@ export const GoalList: React.FC = () => {
                     <GoalItem
                         key={goal.id}
                         goal={goal}
-                        onToggle={() => toggleGoal(goal.id, !goal.completed)}
+                        onToggle={() => handleToggle(goal.id, goal.completed)}
                         onDelete={() => deleteGoal(goal.id)}
                     />
                 ))}
