@@ -120,48 +120,87 @@
 
 /* Base sprite box */
 .pixel-avatar {
+  display: block;
   background-repeat: no-repeat;
-  background-position: 0% 100%;
+
+  /* Keep Y fixed, animate X only (more reliable than shorthand) */
+  background-position-x: 0%;
+  background-position-y: 100%;
+
   image-rendering: pixelated;
   image-rendering: crisp-edges;
+
+  will-change: background-position;
 }
 
-/* Avoid edge flicker on some sheets */
-@keyframes play-sprite {
+/* Flip wrapper for wolf (never mix with other transforms) */
+.sprite-flip {
+  transform: scaleX(-1);
+  transform-origin: center;
+}
+
+/* Generic X-only sprite animation */
+@keyframes play-sprite-x {
   from {
-    background-position: 0% 100%;
+    background-position-x: 0%;
   }
 
   to {
-    background-position: 99.999% 100%;
+    background-position-x: 99.999%;
   }
 }
 
 /* --- COWBOY (7 frames) --- */
 .animate-cowboy-idle {
-  background-image: url('/cowboy_idle_sheet.png');
+  background-image: url("/cowboy_idle_sheet.png");
   background-size: 700% 100%;
-  animation: play-sprite 2.2s steps(6) infinite;
+
+  animation-name: play-sprite-x;
+  animation-duration: 3.2s;
+  /* slower breathing */
+  animation-timing-function: steps(6, end);
+  /* 7 frames => 6 steps */
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
 }
 
 /* --- COWBOY ATTACK (6 frames) --- */
 .animate-cowboy-attack {
-  background-image: url('/cowboy_attack_sheet.png');
+  background-image: url("/cowboy_attack_sheet.png");
   background-size: 600% 100%;
-  animation: play-sprite 2.6s steps(5) forwards;
+
+  animation-name: play-sprite-x;
+  animation-duration: 2.6s;
+  animation-timing-function: steps(5, end);
+  /* 6 frames => 5 steps */
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
 }
 
 /* --- WOLF (7 frames) --- */
 .animate-wolf-idle {
-  background-image: url('/wolf_idle_sheet.png');
+  background-image: url("/wolf_idle_sheet.png");
   background-size: 700% 100%;
-  animation: play-sprite 2.2s steps(6) infinite;
+
+  animation-name: play-sprite-x;
+  animation-duration: 3.2s;
+  /* slower breathing */
+  animation-timing-function: steps(6, end);
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
 }
 
 /* --- WOLF HURT (4 frames) --- */
 .animate-wolf-hurt {
-  background-image: url('/wolf_hurt_sheet.png');
+  background-image: url("/wolf_hurt_sheet.png");
   background-size: 400% 100%;
-  animation: play-sprite 1.6s steps(3) forwards;
+
+  animation-name: play-sprite-x;
+  animation-duration: 1.6s;
+  animation-timing-function: steps(3, end);
+  /* 4 frames => 3 steps */
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+
   filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(5);
 }

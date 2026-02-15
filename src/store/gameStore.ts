@@ -22,6 +22,7 @@ interface GameState {
     isAttacking: boolean;
     wolfStatus: "idle" | "hurt";
     isShaking: boolean;
+    attackSeq: number; // Force re-render of sprites
 
     // Actions
     addGoal: (goal: Omit<Goal, "id" | "completed">) => void;
@@ -59,6 +60,7 @@ export const useGameStore = create<GameState>()(
                 isAttacking: false,
                 wolfStatus: "idle",
                 isShaking: false,
+                attackSeq: 0,
 
                 addGoal: (goalData) =>
                     set((state) => ({
@@ -136,7 +138,7 @@ export const useGameStore = create<GameState>()(
                     // Clear existing timers to prevent movement glitching
                     clearTimers();
 
-                    set({ isAttacking: true });
+                    set((state) => ({ isAttacking: true, attackSeq: state.attackSeq + 1 }));
 
                     timers.push(setTimeout(() => {
                         set({ wolfStatus: "hurt", isShaking: true });

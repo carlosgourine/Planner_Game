@@ -4,7 +4,7 @@ import { PixelAvatar } from "./PixelAvatar";
 import { levels } from "../data/levels";
 
 export const BossArena: React.FC = () => {
-    const { bossHp, currentLevelId, isAttacking, wolfStatus, isShaking } = useGameStore();
+    const { bossHp, currentLevelId, isAttacking, wolfStatus, isShaking, attackSeq } = useGameStore();
 
     const level = levels.find((l) => l.id === currentLevelId) || levels[0];
     const maxBossHp = level.maxHp;
@@ -58,6 +58,7 @@ export const BossArena: React.FC = () => {
                 >
                     <div className="relative">
                         <PixelAvatar
+                            key={`cowboy-${attackSeq}-${isAttacking ? "atk" : "idle"}`}
                             type="cowboy"
                             isAttacking={isAttacking}
                             className="w-[clamp(220px,26vw,360px)] h-[clamp(220px,26vw,360px)] relative z-10"
@@ -75,9 +76,9 @@ export const BossArena: React.FC = () => {
                     } as React.CSSProperties}
                 >
                     <div className="relative">
-                        {/* Fix: Force transform so it cannot fail */}
-                        <div style={{ transform: "scaleX(-1)", transformOrigin: "center" }}>
+                        <div className="sprite-flip">
                             <PixelAvatar
+                                key={`wolf-${attackSeq}-${wolfStatus}`}
                                 type="wolf"
                                 isHurt={wolfStatus === "hurt"}
                                 className="w-[clamp(220px,26vw,360px)] h-[clamp(220px,26vw,360px)] relative z-10"
