@@ -54,14 +54,19 @@ export const BossArena: React.FC = () => {
                     style={{
                         left: LEFT_X,
                         bottom: GROUND_Y,
+                        "--lunge": "clamp(70px, 10vw, 160px)",
                     } as React.CSSProperties}
                 >
-                    <div className="relative">
+                    {/* IMPORTANT: bob/lunge is on a wrapper, NOT on the sprite itself */}
+                    <div className={`relative ${isAttacking ? "animate-lunge" : "animate-idle-bob"}`}>
                         <PixelAvatar
                             key={`cowboy-${attackSeq}-${isAttacking ? "atk" : "idle"}`}
                             type="cowboy"
                             isAttacking={isAttacking}
-                            className="w-[clamp(220px,26vw,360px)] h-[clamp(220px,26vw,360px)] relative z-10"
+                            className={`${isAttacking
+                                    ? "w-[clamp(360px,40vw,500px)] h-[clamp(220px,26vw,360px)]" // Wider for attack
+                                    : "w-[clamp(220px,26vw,360px)] h-[clamp(220px,26vw,360px)]" // Standard for idle
+                                } relative z-10`}
                         />
                         <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-24 h-5 bg-black/50 rounded-[100%] blur-sm z-0" />
                     </div>
@@ -73,17 +78,18 @@ export const BossArena: React.FC = () => {
                     style={{
                         left: RIGHT_X,
                         bottom: GROUND_Y,
+                        "--recoil": "clamp(12px, 2.4vw, 30px)",
                     } as React.CSSProperties}
                 >
-                    <div className="relative">
-                        <div className="sprite-flip">
-                            <PixelAvatar
-                                key={`wolf-${attackSeq}-${wolfStatus}`}
-                                type="wolf"
-                                isHurt={wolfStatus === "hurt"}
-                                className="w-[clamp(220px,26vw,360px)] h-[clamp(220px,26vw,360px)] relative z-10"
-                            />
-                        </div>
+                    {/* IMPORTANT: recoil/bob is on a wrapper, flip is INSIDE it */}
+                    <div className={`relative ${wolfStatus === "hurt" ? "animate-recoil" : "animate-idle-bob"}`}>
+                        {/* Remove sprite-flip to fix orientation */}
+                        <PixelAvatar
+                            key={`wolf-${attackSeq}-${wolfStatus}`}
+                            type="wolf"
+                            isHurt={wolfStatus === "hurt"}
+                            className="w-[clamp(220px,26vw,360px)] h-[clamp(220px,26vw,360px)] relative z-10"
+                        />
                         <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-24 h-5 bg-black/50 rounded-[100%] blur-sm z-0" />
                     </div>
                 </div>
