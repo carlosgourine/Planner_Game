@@ -88,7 +88,10 @@ export const BossArena: React.FC = () => {
                             key={`wolf-${attackSeq}-${wolfStatus}`}
                             type="wolf"
                             isHurt={wolfStatus === "hurt"}
-                            className="w-[clamp(220px,26vw,360px)] h-[clamp(220px,26vw,360px)] relative z-10"
+                            className={`${wolfStatus === "hurt"
+                                    ? "w-[clamp(280px,32vw,450px)] h-[clamp(220px,26vw,360px)]" // Wider for hurt impact
+                                    : "w-[clamp(220px,26vw,360px)] h-[clamp(220px,26vw,360px)]" // Standard
+                                } relative z-10`}
                         />
                         <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-24 h-5 bg-black/50 rounded-[100%] blur-sm z-0" />
                     </div>
