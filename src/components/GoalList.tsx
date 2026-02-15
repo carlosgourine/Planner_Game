@@ -10,8 +10,8 @@ export const GoalList: React.FC = () => {
 
     const handleToggle = (id: string, currentStatus: boolean) => {
         toggleGoal(id, !currentStatus);
+        // Only attack if the box was checked (not unchecked)
         if (!currentStatus) {
-            // If completing the task, trigger attack animation
             triggerAttack();
         }
     };

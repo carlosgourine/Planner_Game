@@ -85,23 +85,23 @@ export const useGameStore = create<GameState>()(
             })),
 
             triggerAttack: () => {
-                // 1. Cowboy starts his attack (Animation duration: 600ms)
+                // 1. Start Cowboy Attack Sequence
                 set({ isAttacking: true });
 
-                // 2. Impact point (approx 400ms)
+                // 2. Impact Point (~250ms in): Wolf gets hurt
                 setTimeout(() => {
                     set({ wolfStatus: 'hurt' });
-                }, 400);
+                }, 250);
 
-                // 3. Cowboy finishes his move
+                // 3. Attack Ends (400ms): Cowboy goes back to idle
                 setTimeout(() => {
                     set({ isAttacking: false });
-                }, 600);
+                }, 400);
 
-                // 4. Wolf recovers after a short delay
+                // 4. Recovery Ends (~550ms): Wolf goes back to idle
                 setTimeout(() => {
                     set({ wolfStatus: 'idle' });
-                }, 700);
+                }, 550);
             },
 
             endDay: () => set((state) => {

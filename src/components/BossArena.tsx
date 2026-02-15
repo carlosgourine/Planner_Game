@@ -1,82 +1,83 @@
 import React from 'react';
 import { useGameStore } from '../store/gameStore';
-import { levels } from '../data/levels';
 import { PixelAvatar } from './PixelAvatar';
+import { levels } from '../data/levels';
 
 export const BossArena: React.FC = () => {
-    const { currentLevelId, bossHp, isAttacking, wolfStatus } = useGameStore();
+    // Get all necessary data from the store
+    const { bossHp, currentLevelId, isAttacking, wolfStatus } = useGameStore();
+
+    // Calculate max health based on current level
     const level = levels.find(l => l.id === currentLevelId) || levels[0];
-    const maxHp = level.maxHp;
-    const healthPercentage = Math.max(0, (bossHp / maxHp) * 100);
+    const maxBossHp = level.maxHp;
+
+    const healthPercentage = (bossHp / maxBossHp) * 100;
 
     return (
-        <div className="w-full mb-8 relative group">
-            {/* Stage / Arena View */}
-            <div
-                className="relative w-full aspect-video max-h-[500px] bg-slate-900 border-4 border-slate-700 rounded-xl overflow-hidden shadow-2xl ring-4 ring-black/50"
-            >
-                {/* HUD: Fighting Game Style Overlay */}
-                <div className="absolute top-0 left-0 right-0 p-4 z-30 bg-gradient-to-b from-black/60 to-transparent">
-                    <div className="flex justify-between items-center mb-2 px-2 uppercase font-['Press_Start_2P'] text-[10px] md:text-xs text-white text-shadow">
-                        <span>COWBOY</span>
-                        <span>WOLF</span>
-                    </div>
+        // Container for the entire game view
+        <div className="relative w-full max-w-4xl mx-auto overflow-hidden rounded-xl shadow-2xl border-4 border-slate-800 bg-black">
 
-                    {/* Boss Health Bar */}
-                    <div className="w-full max-w-md mx-auto h-4 bg-red-900/80 border-2 border-slate-900 relative">
-                        <div
-                            className="h-full bg-gradient-to-r from-yellow-500 to-red-600 transition-all duration-200"
-                            style={{ width: `${healthPercentage}%` }}
+            {/* --- BACKGROUND IMAGE --- */}
+            {/* Using a real img tag ensures it doesn't stretch or distort */}
+            <img
+                src="/background.jpg"
+                alt="Fight Arena"
+                className="w-full h-auto block"
+                style={{ imageRendering: 'pixelated' }}
+            />
+
+            {/* --- HUD LAYER --- */}
+            <div className="absolute top-0 left-0 right-0 p-4 z-20">
+                {/* Names */}
+                <div className="flex justify-between mb-2 px-2 font-['Press_Start_2P'] text-xs text-white text-shadow-lg">
+                    <span>COWBOY</span>
+                    <span>WOLF</span> {/* Fixed text */}
+                </div>
+                {/* Health Bar */}
+                <div className="w-full h-6 bg-slate-900 border-2 border-slate-700 relative shadow-inner">
+                    <div
+                        className="h-full bg-gradient-to-r from-red-500 to-red-700 transition-all duration-300 ease-out origin-left"
+                        style={{ width: `${healthPercentage}%` }}
+                    />
+                </div>
+            </div>
+
+            {/* --- FIGHTERS LAYER --- */}
+            <div className="absolute inset-0 z-10 pointer-events-none">
+
+                {/* COWBOY POSITIONING */}
+                {/* Bottom-left placement with a slight forward slide on attack */}
+                <div className={`absolute bottom-12 left-16 md:left-24 z-20 transition-transform duration-100 ${isAttacking ? 'translate-x-12' : ''}`}>
+                    <div className="relative">
+                        <PixelAvatar
+                            type="cowboy"
+                            isAttacking={isAttacking}
+                            // Fixed, smaller size for sharp pixel art
+                            className="w-32 h-32 md:w-40 md:h-40 relative z-10"
                         />
+                        {/* Shadow */}
+                        <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-20 h-4 bg-black/50 rounded-[100%] blur-sm z-0" />
                     </div>
                 </div>
 
-                {/* Fighting Game Background */}
-                <div
-                    className="absolute inset-0 z-0 bg-center bg-no-repeat"
-                    style={{
-                        backgroundImage: `url('/background.jpg')`,
-                        backgroundSize: 'cover',
-                        imageRendering: 'pixelated' // Keep pixel art crisp
-                    }}
-                >
-                    {/* Overlay for better text visibility */}
-                    <div className="absolute inset-0 bg-black/10" />
-
-                    {/* Location Indicator */}
-                    <div className="absolute bottom-4 left-4 text-[#4ade80] text-xs font-mono tracking-widest opacity-80">
-                        LOCATION: CITY CENTER
-                    </div>
-                </div>
-
-                {/* Characters Container */}
-                <div className="absolute inset-0 top-16 flex items-end justify-between px-16 md:px-32 pb-12 z-20">
-
-                    {/* Cowboy (Player) */}
-                    <div className={`transform transition-transform duration-100 ${isAttacking ? 'translate-x-16' : 'translate-x-0'}`}>
-                        <div className="relative">
-                            <PixelAvatar
-                                type="cowboy"
-                                isAttacking={isAttacking}
-                                className="w-32 h-32 md:w-48 md:h-48"
-                            />
-                            {/* Shadow */}
-                            <div className="absolute -bottom-2 left-4 w-24 h-4 bg-black/40 rounded-[100%] blur-sm" />
-                        </div>
-                    </div>
-
-                    {/* Wolf (Boss) */}
+                {/* WOLF POSITIONING */}
+                {/* Bottom-right placement */}
+                <div className="absolute bottom-12 right-16 md:right-24 z-10">
                     <div className="relative">
                         <PixelAvatar
                             type="wolf"
                             isHurt={wolfStatus === 'hurt'}
-                            className="w-32 h-32 md:w-48 md:h-48"
+                            // Fixed size & FLIPPED to face left
+                            className="w-32 h-32 md:w-40 md:h-40 scale-x-[-1] relative z-10"
                         />
                         {/* Shadow */}
-                        <div className="absolute -bottom-2 left-4 w-24 h-4 bg-black/40 rounded-[100%] blur-sm" />
+                        <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-20 h-4 bg-black/50 rounded-[100%] blur-sm z-0" />
                     </div>
                 </div>
+
             </div>
         </div>
     );
 };
+
+
