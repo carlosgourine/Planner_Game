@@ -64,8 +64,8 @@ export const BossArena: React.FC = () => {
                             type="cowboy"
                             isAttacking={isAttacking}
                             className={`${isAttacking
-                                    ? "w-[clamp(360px,40vw,500px)] h-[clamp(220px,26vw,360px)]" // Wider for attack
-                                    : "w-[clamp(220px,26vw,360px)] h-[clamp(220px,26vw,360px)]" // Standard for idle
+                                ? "w-[clamp(440px,50vw,700px)] h-[clamp(220px,26vw,360px)]" // Wider for attack
+                                : "w-[clamp(220px,26vw,360px)] h-[clamp(220px,26vw,360px)]" // Standard for idle
                                 } relative z-10`}
                         />
                         <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-24 h-5 bg-black/50 rounded-[100%] blur-sm z-0" />

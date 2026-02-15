@@ -231,7 +231,7 @@
   background-size: 600% 100%;
 
   animation-name: play-sprite-x;
-  animation-duration: 2.6s;
+  animation-duration: 2.2s;
   animation-timing-function: steps(5, end);
   /* 6 frames => 5 steps */
   animation-iteration-count: 1;
@@ -257,7 +257,7 @@
   background-size: 400% 100%;
 
   animation-name: play-sprite-x;
-  animation-duration: 1.6s;
+  animation-duration: 1.2s;
   animation-timing-function: steps(3, end);
   /* 4 frames => 3 steps */
   animation-iteration-count: 1;
