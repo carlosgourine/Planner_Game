@@ -56,7 +56,7 @@ export const BossArena: React.FC = () => {
                         bottom: GROUND_Y,
                     } as React.CSSProperties}
                 >
-                    <div className="relative animate-idle-bob">
+                    <div className="relative">
                         <PixelAvatar
                             type="cowboy"
                             isAttacking={isAttacking}
@@ -74,15 +74,12 @@ export const BossArena: React.FC = () => {
                         bottom: GROUND_Y,
                     } as React.CSSProperties}
                 >
-                    <div className="relative animate-idle-bob">
-                        {/* Fix: Use safe Tailwind flip class with origin center */}
-                        <div className="-scale-x-100 origin-center">
-                            <PixelAvatar
-                                type="wolf"
-                                isHurt={wolfStatus === "hurt"}
-                                className="w-[clamp(220px,26vw,360px)] h-[clamp(220px,26vw,360px)] relative z-10"
-                            />
-                        </div>
+                    <div className="relative">
+                        <PixelAvatar
+                            type="wolf"
+                            isHurt={wolfStatus === "hurt"}
+                            className="w-[clamp(220px,26vw,360px)] h-[clamp(220px,26vw,360px)] relative z-10"
+                        />
                         <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-24 h-5 bg-black/50 rounded-[100%] blur-sm z-0" />
                     </div>
                 </div>
