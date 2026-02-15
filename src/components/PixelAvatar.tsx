@@ -22,5 +22,10 @@ export const PixelAvatar: React.FC<PixelAvatarProps> = ({
                 ? "animate-wolf-hurt"
                 : "animate-wolf-idle";
 
-    return <div className={`pixel-avatar ${animClass} ${className}`} />;
+    return (
+        <div
+            className={`pixel-avatar ${animClass} ${className}`}
+            aria-hidden="true"
+        />
+    );
 };

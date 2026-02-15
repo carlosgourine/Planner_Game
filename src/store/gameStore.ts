@@ -42,6 +42,13 @@ export const useGameStore = create<GameState>()(
             const startLevelId = 1;
             const startLevel = levels.find((l) => l.id === startLevelId) || levels[0];
 
+            // Timer cleanup to prevent stacking
+            let timers: ReturnType<typeof setTimeout>[] = [];
+            const clearTimers = () => {
+                timers.forEach(clearTimeout);
+                timers = [];
+            };
+
             return {
                 currentLevelId: startLevelId,
                 bossHp: startLevel.maxHp,
@@ -120,28 +127,38 @@ export const useGameStore = create<GameState>()(
                     }),
 
                 triggerAttack: () => {
-                    // Start attack now
+                    // Match index.css attack duration (1.4s)
+                    const ATTACK_TOTAL = 1400;
+
+                    // Put impact roughly when the kick/flare looks like it hits
+                    const IMPACT_AT = 800;
+
+                    // How long the shake lasts
+                    const SHAKE_LEN = 250;
+
+                    // How long the wolf stays in hurt pose
+                    const HURT_LEN = 900;
+
+                    // Clear existing timers to prevent movement glitching
+                    clearTimers();
+
                     set({ isAttacking: true });
 
-                    // Impact moment
-                    setTimeout(() => {
+                    timers.push(setTimeout(() => {
                         set({ wolfStatus: "hurt", isShaking: true });
-                    }, 220);
+                    }, IMPACT_AT));
 
-                    // Stop shake quickly (snappy)
-                    setTimeout(() => {
+                    timers.push(setTimeout(() => {
                         set({ isShaking: false });
-                    }, 320);
+                    }, IMPACT_AT + SHAKE_LEN));
 
-                    // Cowboy returns
-                    setTimeout(() => {
+                    timers.push(setTimeout(() => {
                         set({ isAttacking: false });
-                    }, 360);
+                    }, ATTACK_TOTAL));
 
-                    // Wolf returns
-                    setTimeout(() => {
+                    timers.push(setTimeout(() => {
                         set({ wolfStatus: "idle" });
-                    }, 520);
+                    }, IMPACT_AT + HURT_LEN));
                 },
 
                 endDay: () =>
