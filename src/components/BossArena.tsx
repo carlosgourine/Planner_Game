@@ -54,10 +54,9 @@ export const BossArena: React.FC = () => {
                     style={{
                         left: LEFT_X,
                         bottom: GROUND_Y,
-                        '--lunge': "clamp(70px, 10vw, 160px)",
                     } as React.CSSProperties}
                 >
-                    <div className={`relative ${isAttacking ? "animate-lunge" : "animate-idle-bob"}`}>
+                    <div className="relative animate-idle-bob">
                         <PixelAvatar
                             type="cowboy"
                             isAttacking={isAttacking}
@@ -73,12 +72,11 @@ export const BossArena: React.FC = () => {
                     style={{
                         left: RIGHT_X,
                         bottom: GROUND_Y,
-                        '--recoil': "clamp(12px, 2.4vw, 30px)",
                     } as React.CSSProperties}
                 >
-                    <div className={`relative ${wolfStatus === "hurt" ? "animate-recoil" : "animate-idle-bob"}`}>
-                        {/* Flip inner wrapper so recoil still works */}
-                        <div className="scale-x-[-1]">
+                    <div className="relative animate-idle-bob">
+                        {/* Fix: Use safe Tailwind flip class with origin center */}
+                        <div className="-scale-x-100 origin-center">
                             <PixelAvatar
                                 type="wolf"
                                 isHurt={wolfStatus === "hurt"}

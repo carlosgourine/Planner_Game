@@ -207,7 +207,8 @@
 .animate-cowboy-attack {
   background-image: url('/cowboyfightreal.png');
   background-size: 800% 100%;
-  animation: play-sprite 0.45s steps(7) forwards;
+  animation: play-sprite 1.4s steps(7) forwards;
+  /* MATCH store */
 }
 
 /* --- WOLF (8 frames) --- */
@@ -218,34 +219,39 @@
 }
 
 @keyframes wolf-hurt-skip {
-  /* 8 columns => positions:
-     0%, 14.2857%, 28.5714%, 42.8571%, 57.1429%, 71.4286%, 85.7143%, 100% */
+  /* 8 columns: 0%, 14.2857%, 28.5714%, 42.8571%, 57.1429%, 71.4286%, 85.7143%, 100% */
+  /* Use HOLD ranges so there is ZERO sliding between frames */
 
-  0% {
+  0%,
+  24.99% {
+    background-position: 0% 0;
+  }
+
+  /* col0 */
+  25%,
+  49.99% {
     background-position: 14.2857% 0;
   }
 
-  /* col 1 */
-  33% {
+  /* col1 */
+  50%,
+  74.99% {
     background-position: 28.5714% 0;
   }
 
-  /* col 2 */
-  66% {
-    background-position: 42.8571% 0;
-  }
-
-  /* col 3 */
+  /* col2 */
+  75%,
   100% {
     background-position: 71.4286% 0;
   }
 
-  /* col 5 (crouch) */
+  /* col5 (kneel) */
 }
 
 .animate-wolf-hurt {
   background-image: url('/wolfhurt.png');
   background-size: 800% 100%;
-  animation: wolf-hurt-skip 0.35s steps(1, end) forwards;
+  animation: wolf-hurt-skip 1.0s linear forwards;
+  /* slower + holds last frame */
   filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(5);
 }
