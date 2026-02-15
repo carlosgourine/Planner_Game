@@ -1,6 +1,6 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import { levels } from '../data/levels';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import { levels } from "../data/levels";
 
 export interface Goal {
     id: string;
@@ -8,7 +8,7 @@ export interface Goal {
     urgency: number; // 1-5
     difficulty: number; // 1-5
     completed: boolean;
-    timeTaken?: number; // in minutes
+    timeTaken?: number; // minutes
 }
 
 interface GameState {
@@ -16,130 +16,189 @@ interface GameState {
     bossHp: number;
     goals: Goal[];
     day: number;
-    gameStatus: 'playing' | 'won_level' | 'lost_level' | 'game_won';
+    gameStatus: "playing" | "won_level" | "lost_level" | "game_won";
 
-    // Fighting Animation State
+    // Animation state
     isAttacking: boolean;
-    wolfStatus: 'idle' | 'hurt';
+    wolfStatus: "idle" | "hurt";
     isShaking: boolean;
 
     // Actions
-    addGoal: (goal: Omit<Goal, 'id' | 'completed'>) => void;
+    addGoal: (goal: Omit<Goal, "id" | "completed">) => void;
     toggleGoal: (id: string, completed: boolean) => void;
+    deleteGoal: (id: string) => void;
+    triggerAttack: () => void;
+
     endDay: () => void;
     nextLevel: () => void;
     resetGame: () => void;
-    deleteGoal: (id: string) => void;
-    triggerAttack: () => void;
 }
+
+const clamp = (n: number, min: number, max: number) => Math.max(min, Math.min(max, n));
 
 export const useGameStore = create<GameState>()(
     persist(
-        (set) => ({
-            currentLevelId: 1,
-            bossHp: levels[0].maxHp,
-            goals: [],
-            day: 1,
-            gameStatus: 'playing',
+        (set, get) => {
+            const startLevelId = 1;
+            const startLevel = levels.find((l) => l.id === startLevelId) || levels[0];
 
-            // Animation State Initial Values
-            isAttacking: false,
-            wolfStatus: 'idle',
-            isShaking: false,
-
-            addGoal: (goalData) => set((state) => ({
-                goals: [...state.goals, { ...goalData, id: crypto.randomUUID(), completed: false }]
-            })),
-
-            toggleGoal: (id, completed) => set((state) => {
-                const goal = state.goals.find(g => g.id === id);
-                if (!goal) return state;
-
-                let damage = 0;
-                if (completed && !goal.completed) {
-                    // Calculate productivity/damage
-                    // Base Damage + (Difficulty * Urgency)
-                    damage = (goal.difficulty * goal.urgency) + 5;
-                } else if (!completed && goal.completed) {
-                    // Revert damage if user unchecks
-                    damage = -((goal.difficulty * goal.urgency) + 5);
-                }
-
-                const newHp = Math.max(0, state.bossHp - damage);
-
-                // Check for win
-                let newStatus: GameState['gameStatus'] = state.gameStatus;
-                if (newHp === 0 && state.gameStatus === 'playing') {
-                    newStatus = 'won_level';
-                } else if (newHp > 0 && state.gameStatus === 'won_level') {
-                    newStatus = 'playing';
-                }
-
-                return {
-                    goals: state.goals.map(g => g.id === id ? { ...g, completed } : g),
-                    bossHp: newHp,
-                    gameStatus: newStatus
-                };
-            }),
-
-            deleteGoal: (id) => set((state) => ({
-                goals: state.goals.filter(g => g.id !== id)
-            })),
-
-            triggerAttack: () => {
-                set({ isAttacking: true });
-
-                // IMPACT POINT: Shake the screen at the exact moment of contact
-                setTimeout(() => {
-                    set({
-                        wolfStatus: 'hurt',
-                        isShaking: true // Start shaking
-                    });
-                }, 250);
-
-                // Stop shaking quickly for that snappy feel
-                setTimeout(() => {
-                    set({ isShaking: false });
-                }, 450);
-
-                // Reset Cowboy
-                setTimeout(() => {
-                    set({ isAttacking: false });
-                }, 400);
-
-                // Reset Wolf
-                setTimeout(() => {
-                    set({ wolfStatus: 'idle' });
-                }, 600);
-            },
-
-            endDay: () => set((state) => {
-                if (state.bossHp <= 0) {
-                    return state;
-                } else {
-                    return {
-                        gameStatus: 'playing',
-                        goals: [], // Fresh start for the new day
-                        bossHp: levels[0].maxHp, // Reset Boss HP
-                        day: state.day + 1
-                    };
-                }
-            }),
-
-            nextLevel: () => set(() => {
-                return { gameStatus: 'game_won' };
-            }),
-
-            resetGame: () => set({
-                currentLevelId: 1,
-                bossHp: levels[0].maxHp,
+            return {
+                currentLevelId: startLevelId,
+                bossHp: startLevel.maxHp,
                 goals: [],
                 day: 1,
-                gameStatus: 'playing'
-            }),
-        }),
-        {
-            name: 'dopamine-planner-storage',
-        }
+                gameStatus: "playing",
+
+                isAttacking: false,
+                wolfStatus: "idle",
+                isShaking: false,
+
+                addGoal: (goalData) =>
+                    set((state) => ({
+                        goals: [
+                            ...state.goals,
+                            { ...goalData, id: crypto.randomUUID(), completed: false },
+                        ],
+                    })),
+
+                toggleGoal: (id, completed) =>
+                    set((state) => {
+                        const goal = state.goals.find((g) => g.id === id);
+                        if (!goal) return state;
+
+                        const level = levels.find((l) => l.id === state.currentLevelId) || levels[0];
+                        const maxBossHp = level.maxHp;
+
+                        let damage = 0;
+
+                        // Only deal damage when going from unchecked -> checked
+                        if (completed && !goal.completed) {
+                            damage = goal.difficulty * goal.urgency + 5;
+                            // Trigger attack (microtask so it happens after state updates)
+                            queueMicrotask(() => get().triggerAttack());
+                        }
+
+                        // If user unchecks, restore HP (reverse damage)
+                        if (!completed && goal.completed) {
+                            damage = -(goal.difficulty * goal.urgency + 5);
+                        }
+
+                        const newHp = clamp(state.bossHp - damage, 0, maxBossHp);
+
+                        let newStatus: GameState["gameStatus"] = state.gameStatus;
+                        if (newHp === 0 && state.gameStatus === "playing") newStatus = "won_level";
+                        if (newHp > 0 && state.gameStatus === "won_level") newStatus = "playing";
+
+                        return {
+                            goals: state.goals.map((g) => (g.id === id ? { ...g, completed } : g)),
+                            bossHp: newHp,
+                            gameStatus: newStatus,
+                        };
+                    }),
+
+                // OPTIONAL FIX: if user deletes a completed goal, restore HP properly
+                deleteGoal: (id) =>
+                    set((state) => {
+                        const goal = state.goals.find((g) => g.id === id);
+                        if (!goal) return state;
+
+                        const level = levels.find((l) => l.id === state.currentLevelId) || levels[0];
+                        const maxBossHp = level.maxHp;
+
+                        let bossHp = state.bossHp;
+
+                        if (goal.completed) {
+                            const restore = goal.difficulty * goal.urgency + 5;
+                            bossHp = clamp(state.bossHp + restore, 0, maxBossHp);
+                        }
+
+                        return {
+                            goals: state.goals.filter((g) => g.id !== id),
+                            bossHp,
+                            gameStatus: bossHp === 0 ? "won_level" : "playing",
+                        };
+                    }),
+
+                triggerAttack: () => {
+                    // Start attack now
+                    set({ isAttacking: true });
+
+                    // Impact moment
+                    setTimeout(() => {
+                        set({ wolfStatus: "hurt", isShaking: true });
+                    }, 220);
+
+                    // Stop shake quickly (snappy)
+                    setTimeout(() => {
+                        set({ isShaking: false });
+                    }, 320);
+
+                    // Cowboy returns
+                    setTimeout(() => {
+                        set({ isAttacking: false });
+                    }, 360);
+
+                    // Wolf returns
+                    setTimeout(() => {
+                        set({ wolfStatus: "idle" });
+                    }, 520);
+                },
+
+                endDay: () =>
+                    set((state) => {
+                        // if already won, don't reset
+                        if (state.bossHp <= 0) return state;
+
+                        const level = levels.find((l) => l.id === state.currentLevelId) || levels[0];
+
+                        return {
+                            goals: [],
+                            bossHp: level.maxHp,
+                            day: state.day + 1,
+                            gameStatus: "playing",
+                            isAttacking: false,
+                            wolfStatus: "idle",
+                            isShaking: false,
+                        };
+                    }),
+
+                nextLevel: () =>
+                    set((state) => {
+                        const nextId = state.currentLevelId + 1;
+                        const next = levels.find((l) => l.id === nextId);
+
+                        // No next level => game won
+                        if (!next) {
+                            return { gameStatus: "game_won" };
+                        }
+
+                        return {
+                            currentLevelId: nextId,
+                            bossHp: next.maxHp,
+                            goals: [],
+                            day: 1,
+                            gameStatus: "playing",
+                            isAttacking: false,
+                            wolfStatus: "idle",
+                            isShaking: false,
+                        };
+                    }),
+
+                resetGame: () => {
+                    const first = levels.find((l) => l.id === 1) || levels[0];
+                    set({
+                        currentLevelId: 1,
+                        bossHp: first.maxHp,
+                        goals: [],
+                        day: 1,
+                        gameStatus: "playing",
+                        isAttacking: false,
+                        wolfStatus: "idle",
+                        isShaking: false,
+                    });
+                },
+            };
+        },
+        { name: "dopamine-planner-storage" }
     )
 );

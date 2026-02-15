@@ -32,7 +32,7 @@ function App() {
       <div className="fixed inset-0 z-0 opacity-40 transition-all duration-1000" style={bgStyle} />
       <div className="fixed inset-0 z-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
 
-      <div className="relative z-10 container mx-auto px-4 py-8">
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-4 py-8">
 
         {/* Header - now part of BossArena HUD mostly, simplifying */}
         <header className="flex justify-between items-center mb-4">

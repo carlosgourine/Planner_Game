@@ -6,14 +6,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import clsx from 'clsx';
 
 export const GoalList: React.FC = () => {
-    const { goals, toggleGoal, deleteGoal, triggerAttack } = useGameStore();
+    const { goals, toggleGoal, deleteGoal } = useGameStore();
 
     const handleToggle = (id: string, currentStatus: boolean) => {
         toggleGoal(id, !currentStatus);
-        // Only attack if the box was checked (not unchecked)
-        if (!currentStatus) {
-            triggerAttack();
-        }
     };
 
     if (goals.length === 0) {
