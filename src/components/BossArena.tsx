@@ -5,7 +5,7 @@ import { levels } from '../data/levels';
 
 export const BossArena: React.FC = () => {
     // Get all necessary data from the store
-    const { bossHp, currentLevelId, isAttacking, wolfStatus } = useGameStore();
+    const { bossHp, currentLevelId, isAttacking, wolfStatus, isShaking } = useGameStore();
 
     // Calculate max health based on current level
     const level = levels.find(l => l.id === currentLevelId) || levels[0];
@@ -15,7 +15,7 @@ export const BossArena: React.FC = () => {
 
     return (
         // Container for the entire game view
-        <div className="relative w-full max-w-4xl mx-auto overflow-hidden rounded-xl shadow-2xl border-4 border-slate-800 bg-black">
+        <div className={`relative w-full max-w-4xl mx-auto overflow-hidden rounded-xl shadow-2xl border-4 border-slate-800 bg-black ${isShaking ? 'animate-shake' : ''}`}>
 
             {/* --- BACKGROUND IMAGE --- */}
             {/* Using a real img tag ensures it doesn't stretch or distort */}

@@ -19,10 +19,11 @@ export const PixelAvatar: React.FC<PixelAvatarProps> = ({ type, isAttacking, isH
 
     return (
         <div
-            // Apply base classes and the dynamic animation class
-            className={`bg-left bg-no-repeat ${animClass} ${className}`}
-            // CRITICAL: Forces the browser to keep edges sharp when scaling
-            style={{ imageRendering: 'pixelated' }}
+            className={`bg-left bg-no-repeat transition-all ${animClass} ${className}`}
+            style={{
+                imageRendering: 'pixelated', /* Keeps edges sharp */
+                backgroundSize: 'cover'      /* Scales the frames to the container */
+            }}
         />
     );
 };

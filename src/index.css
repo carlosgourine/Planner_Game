@@ -83,47 +83,98 @@
 }
 
 /* =========================================
-   PIXEL ART ANIMATION ENGINE
+   PIXEL ART SNAP ENGINE
    ========================================= */
 
-/* The master keyframe that moves a sprite sheet from start to finish */
 @keyframes play-sprite {
+  from {
+    background-position: 0% 0;
+  }
+
   to {
     background-position: 100% 0;
   }
 }
 
 /* --- COWBOY --- */
+/* 4 frames = steps(3) */
 .animate-cowboy-idle {
   background-image: url('/cowboybreathing.png');
   background-size: 400% 100%;
-  /* 4 frames */
-  /* 0.8s duration, 3 steps between 4 frames, loop forever */
   animation: play-sprite 0.8s steps(3) infinite;
 }
 
+/* 6 frames = steps(5) */
 .animate-cowboy-attack {
   background-image: url('/cowboyfightreal.png');
   background-size: 600% 100%;
-  /* 6 frames */
-  /* 0.4s duration (snappy!), 5 steps, stop at the end */
   animation: play-sprite 0.4s steps(5) forwards;
 }
 
 /* --- WOLF --- */
+/* 4 frames = steps(3) */
 .animate-wolf-idle {
   background-image: url('/wolfbreathing.png');
   background-size: 400% 100%;
-  /* 4 frames */
   animation: play-sprite 0.8s steps(3) infinite;
 }
 
+/* 3 frames = steps(2) */
 .animate-wolf-hurt {
   background-image: url('/wolfhurt.png');
   background-size: 300% 100%;
-  /* 3 frames */
-  /* 0.3s duration (very fast impact), 2 steps, stop at end */
   animation: play-sprite 0.3s steps(2) forwards;
-  /* Adds a yellow/orange hit flash effect */
-  filter: sepia(1) hue-rotate(-50deg) saturate(3) brightness(1.2);
+  filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(5);
+  /* Impact flash */
+}
+
+/* --- SNAPPY IMPACT SHAKE --- */
+@keyframes shake-impact {
+  0% {
+    transform: translate(0, 0);
+  }
+
+  10% {
+    transform: translate(-4px, -2px);
+  }
+
+  20% {
+    transform: translate(4px, 2px);
+  }
+
+  30% {
+    transform: translate(-4px, 2px);
+  }
+
+  40% {
+    transform: translate(4px, -2px);
+  }
+
+  50% {
+    transform: translate(-4px, -2px);
+  }
+
+  60% {
+    transform: translate(4px, 2px);
+  }
+
+  70% {
+    transform: translate(-4px, 2px);
+  }
+
+  80% {
+    transform: translate(4px, -2px);
+  }
+
+  90% {
+    transform: translate(-2px, -1px);
+  }
+
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+.animate-shake {
+  animation: shake-impact 0.2s ease-in-out;
 }

@@ -21,6 +21,7 @@ interface GameState {
     // Fighting Animation State
     isAttacking: boolean;
     wolfStatus: 'idle' | 'hurt';
+    isShaking: boolean;
 
     // Actions
     addGoal: (goal: Omit<Goal, 'id' | 'completed'>) => void;
@@ -44,6 +45,7 @@ export const useGameStore = create<GameState>()(
             // Animation State Initial Values
             isAttacking: false,
             wolfStatus: 'idle',
+            isShaking: false,
 
             addGoal: (goalData) => set((state) => ({
                 goals: [...state.goals, { ...goalData, id: crypto.randomUUID(), completed: false }]
@@ -85,23 +87,30 @@ export const useGameStore = create<GameState>()(
             })),
 
             triggerAttack: () => {
-                // 1. Start Cowboy Attack Sequence
                 set({ isAttacking: true });
 
-                // 2. Impact Point (~250ms in): Wolf gets hurt
+                // IMPACT POINT: Shake the screen at the exact moment of contact
                 setTimeout(() => {
-                    set({ wolfStatus: 'hurt' });
+                    set({
+                        wolfStatus: 'hurt',
+                        isShaking: true // Start shaking
+                    });
                 }, 250);
 
-                // 3. Attack Ends (400ms): Cowboy goes back to idle
+                // Stop shaking quickly for that snappy feel
+                setTimeout(() => {
+                    set({ isShaking: false });
+                }, 450);
+
+                // Reset Cowboy
                 setTimeout(() => {
                     set({ isAttacking: false });
                 }, 400);
 
-                // 4. Recovery Ends (~550ms): Wolf goes back to idle
+                // Reset Wolf
                 setTimeout(() => {
                     set({ wolfStatus: 'idle' });
-                }, 550);
+                }, 600);
             },
 
             endDay: () => set((state) => {
