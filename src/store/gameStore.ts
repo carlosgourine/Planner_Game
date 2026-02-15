@@ -127,17 +127,11 @@ export const useGameStore = create<GameState>()(
                     }),
 
                 triggerAttack: () => {
-                    // Match index.css attack duration (1.4s)
-                    const ATTACK_TOTAL = 1400;
-
-                    // Put impact roughly when the kick/flare looks like it hits
-                    const IMPACT_AT = 800;
-
-                    // How long the shake lasts
+                    // Match index.css durations
+                    const ATTACK_TOTAL = 2600;   // matches 2.6s attack
+                    const IMPACT_AT = 1500;      // when kick looks like it hits
                     const SHAKE_LEN = 250;
-
-                    // How long the wolf stays in hurt pose
-                    const HURT_LEN = 900;
+                    const HURT_LEN = 1600;       // matches wolf hurt duration (1.6s)
 
                     // Clear existing timers to prevent movement glitching
                     clearTimers();

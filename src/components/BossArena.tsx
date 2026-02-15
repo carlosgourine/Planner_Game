@@ -75,11 +75,14 @@ export const BossArena: React.FC = () => {
                     } as React.CSSProperties}
                 >
                     <div className="relative">
-                        <PixelAvatar
-                            type="wolf"
-                            isHurt={wolfStatus === "hurt"}
-                            className="w-[clamp(220px,26vw,360px)] h-[clamp(220px,26vw,360px)] relative z-10"
-                        />
+                        {/* Fix: Force transform so it cannot fail */}
+                        <div style={{ transform: "scaleX(-1)", transformOrigin: "center" }}>
+                            <PixelAvatar
+                                type="wolf"
+                                isHurt={wolfStatus === "hurt"}
+                                className="w-[clamp(220px,26vw,360px)] h-[clamp(220px,26vw,360px)] relative z-10"
+                            />
+                        </div>
                         <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-24 h-5 bg-black/50 rounded-[100%] blur-sm z-0" />
                     </div>
                 </div>
