@@ -8,21 +8,33 @@ interface PixelAvatarProps {
 }
 
 export const PixelAvatar: React.FC<PixelAvatarProps> = ({ type, isAttacking, isHurt, className = '' }) => {
+    let imgSrc = '';
+    let frames = 1;
     let animClass = '';
 
     if (type === 'cowboy') {
-        animClass = isAttacking ? 'animate-cowboy-attack' : 'animate-cowboy-idle';
+        imgSrc = isAttacking ? '/cowboyfightreal.png' : '/cowboybreathing.png';
+        frames = isAttacking ? 6 : 4;
+        animClass = isAttacking ? 'animate-sprite-6' : 'animate-sprite-4';
     } else if (type === 'wolf') {
-        animClass = isHurt ? 'animate-wolf-hurt' : 'animate-wolf-idle';
+        imgSrc = isHurt ? '/wolfhurt.png' : '/wolfbreathing.png';
+        frames = isHurt ? 3 : 4;
+        animClass = isHurt ? 'animate-sprite-3' : 'animate-sprite-4';
     }
 
     return (
-        <div
-            className={`bg-no-repeat bg-left ${animClass} ${className}`}
-            style={{
-                // Explicitly set aspect ratio if needed, for now rely on container dimensions
-                // usually w-32 h-32 or w-64 h-64
-            }}
-        />
+        /* The container hides the extra frames */
+        <div className={`overflow-hidden relative ${className}`}>
+            {/* The image is super wide, and CSS slides it to the left step-by-step */}
+            <img
+                src={imgSrc}
+                alt={type}
+                className={`absolute top-0 left-0 h-full max-w-none ${animClass}`}
+                style={{
+                    width: `${frames * 100}%`,
+                    imageRendering: 'pixelated' /* Keeps the pixel art sharp! */
+                }}
+            />
+        </div>
     );
 };

@@ -88,23 +88,23 @@ export const useGameStore = create<GameState>()(
                 // 1. Cowboy starts his attack (Animation duration: 600ms)
                 set({ isAttacking: true });
 
-                // 2. Impact point (approx 75% through animation)
+                // 2. Impact point (approx 400ms)
                 setTimeout(() => {
                     set((state) => ({
                         wolfStatus: 'hurt',
                         bossHp: Math.max(0, state.bossHp - 20)
                     }));
-                }, 450);
+                }, 400);
 
                 // 3. Cowboy finishes his move
                 setTimeout(() => {
                     set({ isAttacking: false });
                 }, 600);
 
-                // 4. Wolf recovers after a short delay (recoil)
+                // 4. Wolf recovers after a short delay
                 setTimeout(() => {
                     set({ wolfStatus: 'idle' });
-                }, 950);
+                }, 700);
             },
 
             endDay: () => set((state) => {
