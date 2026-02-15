@@ -135,23 +135,47 @@
 }
 
 /* --- SPRITE ANIMATIONS --- */
-@keyframes slide-frames {
+/* The "end" parameter is crucial to stop the smooth sliding! */
+
+@keyframes slide-4 {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes slide-6 {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes slide-3 {
+  from {
+    transform: translateX(0);
+  }
+
   to {
     transform: translateX(-100%);
   }
 }
 
 .animate-sprite-4 {
-  animation: slide-frames 0.8s steps(4) infinite;
+  animation: slide-4 0.6s steps(4, end) infinite;
 }
 
 .animate-sprite-6 {
-  /* 'forwards' ensures he stops on the last frame instead of looping back to the start */
-  animation: slide-frames 0.6s steps(6) forwards;
+  animation: slide-6 0.4s steps(6, end) forwards;
 }
 
 .animate-sprite-3 {
-  animation: slide-frames 0.4s steps(3) forwards;
-  /* Adds a reddish/yellow damage flash to the wolf */
+  animation: slide-6 0.3s steps(3, end) forwards;
   filter: sepia(1) hue-rotate(-50deg) saturate(3) brightness(1.2);
 }

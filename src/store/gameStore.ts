@@ -90,10 +90,7 @@ export const useGameStore = create<GameState>()(
 
                 // 2. Impact point (approx 400ms)
                 setTimeout(() => {
-                    set((state) => ({
-                        wolfStatus: 'hurt',
-                        bossHp: Math.max(0, state.bossHp - 20)
-                    }));
+                    set({ wolfStatus: 'hurt' });
                 }, 400);
 
                 // 3. Cowboy finishes his move

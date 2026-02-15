@@ -19,8 +19,7 @@ export const BossArena: React.FC = () => {
                 <div className="absolute top-0 left-0 right-0 p-4 z-30 bg-gradient-to-b from-black/60 to-transparent">
                     <div className="flex justify-between items-center mb-2 px-2 uppercase font-['Press_Start_2P'] text-[10px] md:text-xs text-white text-shadow">
                         <span>COWBOY</span>
-                        <span className="text-red-500 animate-pulse">VS</span>
-                        <span>{level.bossName}</span>
+                        <span>WOLF</span>
                     </div>
 
                     {/* Boss Health Bar */}
@@ -51,18 +50,18 @@ export const BossArena: React.FC = () => {
                 </div>
 
                 {/* Characters Container */}
-                <div className="absolute inset-0 top-16 flex items-end justify-between px-24 md:px-48 pb-12 z-20">
+                <div className="absolute inset-0 top-16 flex items-end justify-between px-16 md:px-32 pb-12 z-20">
 
                     {/* Cowboy (Player) */}
-                    <div className={`transform transition-transform duration-100 ${isAttacking ? 'translate-x-24' : 'translate-x-0'}`}>
+                    <div className={`transform transition-transform duration-100 ${isAttacking ? 'translate-x-16' : 'translate-x-0'}`}>
                         <div className="relative">
                             <PixelAvatar
                                 type="cowboy"
                                 isAttacking={isAttacking}
-                                className="w-64 h-64 md:w-80 md:h-80"
+                                className="w-32 h-32 md:w-48 md:h-48"
                             />
                             {/* Shadow */}
-                            <div className="absolute -bottom-4 left-8 w-48 h-6 bg-black/40 rounded-[100%] blur-sm" />
+                            <div className="absolute -bottom-2 left-4 w-24 h-4 bg-black/40 rounded-[100%] blur-sm" />
                         </div>
                     </div>
 
@@ -71,10 +70,10 @@ export const BossArena: React.FC = () => {
                         <PixelAvatar
                             type="wolf"
                             isHurt={wolfStatus === 'hurt'}
-                            className="w-64 h-64 md:w-80 md:h-80"
+                            className="w-32 h-32 md:w-48 md:h-48"
                         />
                         {/* Shadow */}
-                        <div className="absolute -bottom-4 left-8 w-48 h-6 bg-black/40 rounded-[100%] blur-sm" />
+                        <div className="absolute -bottom-2 left-4 w-24 h-4 bg-black/40 rounded-[100%] blur-sm" />
                     </div>
                 </div>
             </div>
